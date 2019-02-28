@@ -1,8 +1,8 @@
-# RTD
-Reachability-based Trajectory Design (RTD)
+# RTD (Reachability-based Trajectory Design)
+_Note: this repository is still under construction!_
 
-Note: this repository is under construction!
-This repository presents the tools required to implement RTD, which is a method of trajectory planning for autonomous mobile robots thaat can guarantee safety (in static environments) and not-at-fault behavior (in dynamic environments).
+This repository presents the tools required to implement RTD, which is a method of trajectory planning for autonomous mobile robots that can guarantee safety (in static environments) and not-at-fault behavior (in dynamic environments).
+
 
 ## Requirements
 To run the files in this repository, you will need the following:
