@@ -35,6 +35,9 @@ This repository implements the methods presented in the following papers:
 
 ## Authors:
 Shreyas Kousik
+
 Sean Vaskov
+
 Ram Vasudevan
-http://roahmlab.com
+
+Visit our website: http://roahmlab.com
