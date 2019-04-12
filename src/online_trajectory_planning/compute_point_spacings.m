@@ -1,9 +1,16 @@
-function [r,a] = compute_buffer_and_point_spacings(FP,b)
-% [r,a] = compute_buffer_and_point_spacings(footprint,buffer_size)
+function [r,a] = compute_point_spacings(FP,b)
+% [R,A] = COMPUTE_POINT_SPACINGS(FOOTPRINT,BUFFER_SIZE)
 %
 % Given a footprint and a buffer size, compute the point spacings r and a.
 % The input "footprint" should be a 2-by-1 vector for a rectangular robot,
 % or a scalar for a circular robot.
+%
+% Paper: https://arxiv.org/abs/1809.06746
+%
+% This implements the examples in Section 6.
+%
+% Author: Shreyas Kousik
+% Date:   12 Apr 2019
 
     if length(FP) == 2
         W = min(FP) ; % robot width

@@ -1,4 +1,41 @@
 function out = compute_FRS(prob)
+% OUTPUT = COMPUTE FRS(PROBLEM_STRUCTURE)
+%
+% An implementation of Program (D^l) from "Bridging the Gap Between Safety
+% and Real-Time Performance in Receding-Horizon Trajectory Design for
+% Mobile Robots." See Section 3; the program is on pg. 12.
+%
+% Paper: https://arxiv.org/abs/1809.06746
+%
+% The FRS, or Forward Reachable Set, is the set of all states that a system
+% can reach in some time horizon T, with a dynamic model f, which we call a
+% trajectory-producing model. This "low dimensional" model generates
+% desired trajectories for a robot to track; since tracking isn't perfect,
+% we also introduce a model g of the tracking error. The dynamics of f and
+% g combined express the motion of the robot through its state space.
+%
+% This function is used to compute the FRS with sums-of-squares (SOS)
+% polynomials. It calls the MOSEK conic optimization solver through the
+% spotless SOS programming toolbox.
+%
+% The input structure must have the following fields:
+%   t       time (1 x 1 msspoly)
+%   z       state (n x 1 msspoly)
+%   k       traj parameters (m x 1 msspoly)
+%   f       traj-producing dynamics (n x 1 msspoly in t, z, and k)
+%   hZ      vector of msspoly that are positive on the state space
+%   hK      vector of msspoly that are positive on the parameter space
+%   hZ0     vector of msspoly that are positive on initial states
+%   degree  even number that is degree of SOS FRS approximation
+%   cost    cost function on Z x K (usually the Lebesgue integral on Z x K)
+%
+% The input structure can contain optional fields:
+%   g       tracking error dynamics (n x 1 msspoly in t, z, and k)
+%   hT      1 x 1 msspoly that defines the time horizon T
+%
+% Authors: Shreyas Kousik and Sean Vaskov
+% Date:    12 Apr 2019
+
 %% parse inputs
     disp('Extracting parameters')
     t = prob.t ; % time
@@ -9,13 +46,13 @@ function out = compute_FRS(prob)
     hK = prob.hK ; % param space as a semi-algebraic set
     hZ0 = prob.hZ0 ; % initial conds as a semi-algebraic set
     degree = prob.degree ; % degree of w polynomial
-    int_ZK = prob.int_ZK ; % cost function (integral of w(z,k) over Z x K)
+    cost = prob.cost ; % cost function (integral of w(z,k) over Z x K)
     
     % time horizon as a semi-algebraic set (default is t \in [0,1])
     if isfield(prob,'hT')
        hT = prob.hT ;
     else 
-       hT = t * (1-t);
+       hT = t * (1-t) ;
     end
     
     % tracking error function g (default is to not have g, so we don't need
@@ -80,24 +117,13 @@ function out = compute_FRS(prob)
     end
 
     % v(t,.) + w > 1 on T x Z x K
-    if reduce_vmon
-        prog = sosOnK(prog, v + w - 1, [t;z;k], [hT; hZ; hK], degree, vmonspec) ;
-    else
-        prog = sosOnK(prog, v + w - 1, [t;z;k], [hT; hZ; hK], degree) ;
-    end
+    prog = sosOnK(prog, v + w - 1, [t;z;k], [hT; hZ; hK], degree) ;
 
     % w > 0 on Z x K
     prog = sosOnK(prog, w, [z;k], [hZ; hK], degree) ;
 
     % -v(0,.) > 0 on Z0 x K
-    prog = sosOnK(prog, -v0, [z(zidx);k], [hZ0; hK], degree) ;
-
-    % v(t,.) > 0 on T x dX x K if boundary is active
-    if enforce_boundary
-        for dzidx = 1:length(hZ)
-            prog = sosOnK(prog, v, [t;z;k], [hT; hZ ; -hZ(dzidx); hK], degree) ;
-        end
-    end
+    prog = sosOnK(prog, -v0, [z;k], [hZ0; hK], degree) ;
     
     % if tracking error is included, we need the following constraints:
     % q - Lgv > 0 on T x Z x K
@@ -115,7 +141,7 @@ function out = compute_FRS(prob)
 
 %% create problem object for computation
     disp('Setting up FRS problem')
-    obj = int_ZK(wmon)' * wcoeff ; 
+    obj = cost(wmon)' * wcoeff ; 
     out.prog = prog ;
     out.wmon = wmon ;
     out.wcoeff = wcoeff ;
@@ -137,6 +163,7 @@ function out = compute_FRS(prob)
     out.w = sol.eval(w) ;
     out.final_cost = sol.eval(obj) ;
     out.duration = end_time ;
+    out.input_problem = prob ;
 
     disp([num2str(end_time/3600), ' hrs elapsed solving problem'])
 end
