@@ -1,18 +1,30 @@
 # RTD (Reachability-based Trajectory Design)
-_Note: this repository is still under construction!_
+_Note: more examples will be added soon!_
 
 This repository presents the tools required to implement RTD, which is a method of trajectory planning for autonomous mobile robots that can guarantee safety (in static environments) and not-at-fault behavior (in dynamic environments).
 
+## RTD Overview
+RTD is a way of controlling a robot, described by a "high-fidelity" dynamic model, by generating "desired trajectories" with a lower-dimensional "trajectory-producing" model. The robot uses a tracking controller (e.g., PID or MPC) to track the desired trajectories. We estimate a worst-case bound on the tracking error dynamics, then use it with the trajectory-producing model to compute a Forward Reachable Set (FRS) offline. The FRS then contains all points in the robot's state space that are reachable while tracking the desired trajectories.
+
+We use the FRS for online planning by first intersecting it with obstacles that we want the robot to avoid. Since the FRS contains all possible trajectories of the robot (when tracking the parameterized desired trajectories), this lets us identify all of the trajectories that could cause a crash. Then, we optimize over the remaining safe trajectories.
+
+The online planning algorithm runs in a "receding horizon" fashion, where a desired trajectory is executed while a new one is computed. This is because robots have limited sensor information at any time, so they have to move through the world to gain more information (about the things they aren't supposed to hit). In RTD, we enforce a planning time constraint, so each planning iteration only has some limited amount of time to try and find a new trajectory. If a new trajectory can't be found, then the robot has to execute a "fail-safe" maneuver; in our prior work (see the references below), we've used coming to a stop as a fail safe since it is widely applicable. Notice that this means _every_ desired trajectory must include a fail-safe maneuver! We ensure this is possible by making the duration of the trajectories large enough for the robot to stop.
+
+This repo demonstrates simple examples of RTD to illustrate how it works both offline and online. We'll be updating it with more examples as we make 'em!
 
 ## Requirements
 To run the files in this repository, you will need the following:
 - MATLAB R2018a or newer (versions as old as R2017a will work for most functionality).
-- Spotless: https://github.com/spot-toolbox/spotless
+- spotless: https://github.com/spot-toolbox/spotless
 - MOSEK: https://www.mosek.com/
-- simulator: https://github.com/skousik/simulator (note, this repo is still under construction)
 
 ## Usage
-Examples are coming soon! For now, check out src/offline_FRS_computation/compute_FRS.m.
+All examples currently are for the FRS computation. We'll be adding examples of estimating tracking error and running online planning soon.
+
+To run the examples, make sure that this repository is on your MATLAB path, and that spotless and MOSEK are installed correctly. Then, in the MATLAB command window, run:
+  >> FRS_computation_example_1()
+
+You should see MOSEK get called in the command window, and then a plot of an FRS in the state and parameter space will pop up.
 
 ## References
 This repository implements the methods presented in the following papers:
