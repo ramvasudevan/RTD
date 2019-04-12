@@ -1,6 +1,4 @@
 # RTD (Reachability-based Trajectory Design)
-_Note: more examples will be added soon!_
-
 This repository presents the tools required to implement RTD, which is a method of trajectory planning for autonomous mobile robots that can guarantee safety (in static environments) and not-at-fault behavior (in dynamic environments).
 
 ## Requirements
@@ -34,3 +32,9 @@ This repository implements the methods presented in the following papers:
 [2] Shreyas Kousik, Sean Vaskov, Fan Bu, Matthew Johnson-Roberson, Ram Vasudevan, "Bridging the Gap Between Safety and Real-Time Performance in Receding-Horizon Trajectory Design for Mobile Robots," available at https://arxiv.org/abs/1809.06746
 
 [3] Sean Vaskov, Utkarsh Sharma, Shreyas Kousik, Matthew Johnson-Roberson, Ramanarayan Vasudevan, "Guaranteed Safe Reachability-based Trajectory Design for a High-Fidelity Model of an Autonomous Passenger Vehicle," available at https://arxiv.org/abs/1902.01786
+
+## Authors:
+Shreyas Kousik
+Sean Vaskov
+Ram Vasudevan
+http://roahmlab.com
