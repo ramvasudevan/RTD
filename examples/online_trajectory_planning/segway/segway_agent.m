@@ -45,9 +45,9 @@ classdef segway_agent < RTD_agent_2D
             vdes = interp1(T,U(2,:),t,'previous') ; % speed
             
             % extract the states
-            h = z(3) ;
-            w = z(4) ;
-            v = z(5) ;
+            h = z(A.heading_index) ;
+            w = z(A.yaw_rate_index) ;
+            v = z(A.speed_index) ;
             
             % determine the inputs
             Kg = A.yaw_accel_motor_gain ;

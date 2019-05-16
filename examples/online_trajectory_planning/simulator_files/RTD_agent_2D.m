@@ -82,8 +82,10 @@ classdef RTD_agent_2D < agent
         %% emergency stop
         % note, this ignores any previous trajectory the agent may have
         % been tracking
-        function stop(A,t_move)
-            t_stop = max(t_move,A.stopping_time) ;
+        function stop(A,t_stop)
+            if nargin < 2
+                t_stop = A.stopping_time ;
+            end
             
             T_input = 0:0.1:t_stop ;
             N_t = length(T_input) ;
@@ -93,9 +95,9 @@ classdef RTD_agent_2D < agent
             
             Z_desired = repmat(stopped_state,1,N_t) ;
             
-            U_input = zeros(A.n_states,N_t) ;
+            U_input = zeros(A.n_inputs,N_t) ;
             
-            A.move(t_move,T_input,U_input, Z_desired) ;
+            A.move(t_stop,T_input,U_input,Z_desired) ;
         end
         
         %% utility

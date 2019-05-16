@@ -75,19 +75,13 @@ function out = compute_FRS(prob)
     % create monomials for (v,w,q) polynomials
     vmon = monomials([t;z;k], 0:degree) ;
     wmon = monomials([z;k], 0:degree) ;
-
-    if exist('g','var')
-        q = msspoly(zeros([size(g,2),1])) ;
-        qmon = monomials([t;z;k], 0:degree) ;
-        for qidx = 1:length(q)
-            [prog, q(qidx), ~] = prog.newFreePoly(qmon) ;
-        end
-    end    
     
     % create (v,w,q) decision variable polynomials
     [prog, v, ~] = prog.newFreePoly(vmon) ;
     [prog, w, wcoeff] = prog.newFreePoly(wmon) ;
     if exist('g','var')
+        q = msspoly(zeros([size(g,2),1])) ;
+        qmon = monomials([t;z;k], 0:degree) ;
         for qidx = 1:length(q)
             [prog, q(qidx), ~] = prog.newFreePoly(qmon) ;
         end

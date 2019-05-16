@@ -53,7 +53,7 @@ function visualize_1D_FRS(solver_output,w_color,figure_number,show_extra_contour
         clabel(C2)
     end
     
-    % plot w
+    % plot w >= 1
     C1 = contour(Z,K,w_eval,[1 1],'LineWidth',2,'EdgeColor',w_color) ;
     clabel(C1)
     
