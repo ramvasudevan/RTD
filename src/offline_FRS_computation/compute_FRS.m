@@ -52,7 +52,7 @@ function out = compute_FRS(prob)
     if isfield(prob,'hT')
        hT = prob.hT ;
     else 
-       hT = t * (1-t) ;
+       hT = t * (1 - t) ;
     end
     
     % tracking error function g (default is to not have g, so we don't need
