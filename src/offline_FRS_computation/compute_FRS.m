@@ -103,7 +103,7 @@ function out = compute_FRS(prob)
 
     % if tracking error is included, we need the following constraints:
     if exist('g','var')
-        % -Lfv - q > 0 on T x Z x K
+        % -Lfv - sum(q) > 0 on T x Z x K
         prog = sosOnK(prog, -Lfv - ones(size(q))'*q, [t;z;k], [hT; hZ; hK], degree) ;
     else
         % -Lfv > 0 on T x Z x K
@@ -153,8 +153,13 @@ function out = compute_FRS(prob)
 
 %% extract problem info
     disp('Extracting results')
-    out.v = sol.eval(v) ;
-    out.w = sol.eval(w) ;
+    v_out = sol.eval(v) ;
+    w_out = sol.eval(w) ;
+    
+    out.v = v_out ;
+    out.lyapunov_function = v_out ;
+    out.w = w_out ;
+    out.indicator_function = w_out ;
     out.final_cost = sol.eval(obj) ;
     out.duration = end_time ;
     out.input_problem = prob ;
