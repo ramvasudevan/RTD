@@ -8,6 +8,7 @@ function h = plot_2D_msspoly_contour(p,x,l,varargin)
 % following properties:
 %   Offset     a 2-by-1 vector (x,y) to shift the origin to
 %   Scale      a scalar value to scale the size of the plot by
+%   FillColor  a color in usual matlab plotting syntax to fill the contour
     
 %% parse inputs
     if nargin < 3
@@ -24,6 +25,8 @@ function h = plot_2D_msspoly_contour(p,x,l,varargin)
                 Offset = varargin{idx+1} ;
             case 'Scale'
                 Scale = varargin{idx+1} ;
+            case 'FillColor'
+                FillColor = varargin{idx+1} ;
             otherwise
                 varargin_new{idx_new} = varargin{idx} ;
                 varargin_new{idx_new+1} = varargin{idx+1} ;
@@ -37,6 +40,10 @@ function h = plot_2D_msspoly_contour(p,x,l,varargin)
     
     if ~exist('Scale','var')
         Scale = 1 ;
+    end
+    
+    if ~exist('FillColor','var')
+        FillColor = [] ;
     end
 
 %% set up for plotting
@@ -53,9 +60,14 @@ function h = plot_2D_msspoly_contour(p,x,l,varargin)
     X2 = Scale*(X2 + Offset(2)) ;
     
 %% plot
-    if nargout > 0
-        h = contour(X1,X2,P,[l l],varargin_new{:}) ;
+    if ~isempty(FillColor)
+        [~,h] = contourf(X1,X2,P,[l l],'Fill','on',varargin_new{:}) ;
+        
     else
-        contour(X1,X2,P,[l l],varargin_new{:}) ;
+        h = contour(X1,X2,P,[l l],varargin_new{:}) ;
+    end
+    
+    if nargout < 1
+        clear h
     end
 end
