@@ -16,6 +16,11 @@ function h = plot_2D_msspoly_contour(p,x,l,varargin)
         varargin = {} ;
     end
     
+    % create default inputs
+    Offset = [0;0] ;
+    Scale = 1 ;
+    FillColor = [] ;
+    
     % iterate through varargin to find Offset and Scale
     varargin_new = {} ;
     idx_new = 1 ;
@@ -33,18 +38,6 @@ function h = plot_2D_msspoly_contour(p,x,l,varargin)
                 idx_new = idx_new + 2 ;
         end
     end
-    
-    if ~exist('Offset','var')
-        Offset = [0;0] ;
-    end
-    
-    if ~exist('Scale','var')
-        Scale = 1 ;
-    end
-    
-    if ~exist('FillColor','var')
-        FillColor = [] ;
-    end
 
 %% set up for plotting
     % set up grid for plotting
@@ -55,14 +48,18 @@ function h = plot_2D_msspoly_contour(p,x,l,varargin)
     % create msspoly surface
     P = reshape(full(msubs(p,x,X)),100,100) ;
     
+%     % scale and shift for plotting
+%     X1 = Scale*(X1 + Offset(1)) ;
+%     X2 = Scale*(X2 + Offset(2)) ;
+
     % scale and shift for plotting
-    X1 = Scale*(X1 + Offset(1)) ;
-    X2 = Scale*(X2 + Offset(2)) ;
+    X1 = Scale*(X1) + Offset(1) ;
+    X2 = Scale*(X2) + Offset(2) ;
     
 %% plot
     if ~isempty(FillColor)
         [~,h] = contourf(X1,X2,P,[l l],'Fill','on',varargin_new{:}) ;
-        
+        colormap(FillColor)
     else
         h = contour(X1,X2,P,[l l],varargin_new{:}) ;
     end

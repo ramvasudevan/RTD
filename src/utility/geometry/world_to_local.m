@@ -9,8 +9,8 @@ function P_out = world_to_local(P_robot, P_world, set_dx, set_dy, Dx, Dy)
 % INPUTS
 %   P_robot     robot position (x,y,heading)
 %   P_world     obstacle points in world (x,y) 2 x N
-%   set_dx      x position of robot in it's local frame
-%   set_dy      y position of robot in it's local frame
+%   set_dx      x position of robot in its local frame
+%   set_dy      y position of robot in its local frame
 %   Dx          scaling in the x dimension
 %   Dy          scaling in the y dimension (equal to Dx by default)
 %
@@ -22,8 +22,8 @@ function P_out = world_to_local(P_robot, P_world, set_dx, set_dy, Dx, Dy)
     end
     
     % extract position and heading from input
-    X = P_robot(1,1) ;
-    Y = P_robot(2,1) ;
+    x = P_robot(1,1) ;
+    y = P_robot(2,1) ;
     h = P_robot(3,1) ;
     
     % get the number of world points
@@ -33,8 +33,8 @@ function P_out = world_to_local(P_robot, P_world, set_dx, set_dy, Dx, Dy)
     % them down to the provided distance
     Imat = ones(N_rows,N_cols);
     
-    XY = [X, 0;
-          0, Y];
+    XY = [x, 0;
+          0, y];
       
     P_out = (P_world - XY*Imat);
     
