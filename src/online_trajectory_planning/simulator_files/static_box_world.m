@@ -24,6 +24,14 @@ classdef static_box_world < world
             
             % call setup to generate obstacles
             W.setup() ;
+            
+            % check for mapping toolbox
+            try
+                polyxpoly([],[],[],[])
+            catch
+                error(['Please make sure the Mapping Toolbox is installed',...
+                    ' so you can use polyxpoly.'])
+            end
         end
         
         %% setup
