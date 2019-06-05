@@ -8,6 +8,12 @@ To run the files in this repository, you will need the following:
 - MOSEK: https://www.mosek.com/ (you only need this if you want to run the offline FRS computation)
 - simulator: https://github.com/skousik/simulator (you only need this to run online planning examples)
 
+You will need to install the following MATLAB toolboxes as well:
+
+- Mapping Toolbox
+- Bioinformatics Toolbox
+- Robotics System Toolbox (to use with ROS)
+
 ## Usage
 All examples currently are for the FRS computation. We'll be adding examples of tracking error and online planning soon.
 
