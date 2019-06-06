@@ -87,12 +87,11 @@ classdef static_box_world < world
                 o = [-l/2  l/2 l/2 -l/2 -l/2 ;
                     -l/2 -l/2 l/2  l/2 -l/2 ] ;
                 
-                % obstacle center, which must be at least 2 times the
-                % default buffer distance away from the start and goal
-                % points
+                % obstacle center, which must not be too close to the start
+                % or goal
                 d_center = 0 ;
                 ds_limit = 0.1*max((xhi-xlo),(yhi-ylo)) ;
-                dg_limit = 3*b ;
+                dg_limit = W.goal_radius ;
                 while (d_center < ds_limit || d_center < dg_limit)
                     c = [(xhi-xlo)*rand(1) + xlo ;
                         (yhi-ylo)*rand(1) + ylo ] ;
