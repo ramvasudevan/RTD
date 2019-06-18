@@ -358,8 +358,8 @@ classdef static_box_world < world
             end
             
             if check_if_plot_is_available(W,'obstacles')
-                W.plot_data.obstacles_seen.XData = O(1,:) ;
-                W.plot_data.obstacles_seen.YData = O(2,:) ;
+                W.plot_data.obstacles.XData = O(1,:) ;
+                W.plot_data.obstacles.YData = O(2,:) ;
             else
                 seen_data = plot(O(1,:),O(2,:),'Color',W.obstacle_seen_color) ;
                 W.plot_data.obstacles = seen_data ;
@@ -398,6 +398,9 @@ classdef static_box_world < world
             if hold_check
                 hold off ;
             end
+            
+            % set axes
+            axis equal
         end
     end
 end
