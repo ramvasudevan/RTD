@@ -27,7 +27,7 @@ classdef static_box_world < world
             
             % check for mapping toolbox
             try
-                polyxpoly([],[],[],[])
+                polyxpoly([],[],[],[]) ;
             catch
                 error(['Please make sure the Mapping Toolbox is installed',...
                     ' so you can use polyxpoly.'])
