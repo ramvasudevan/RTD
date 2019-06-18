@@ -341,5 +341,63 @@ classdef static_box_world < world
                 hold off ;
             end
         end
+        
+        function plot_at_time(W,~)
+            % set up hold if needed
+            hold_check = false ;
+            if ~ishold
+                hold_check = true ;
+                hold on
+            end
+            
+            % plot ass obstacles
+            O = W.obstacles ;
+            
+            if isempty(O)
+                O = nan(2,1) ;
+            end
+            
+            if check_if_plot_is_available(W,'obstacles')
+                W.plot_data.obstacles_seen.XData = O(1,:) ;
+                W.plot_data.obstacles_seen.YData = O(2,:) ;
+            else
+                seen_data = plot(O(1,:),O(2,:),'Color',W.obstacle_seen_color) ;
+                W.plot_data.obstacles = seen_data ;
+            end
+            
+            % plot start
+            s = W.start ;
+            
+            if ~check_if_plot_is_available(W,'start')
+                start_data = plot(s(1),s(2),'bx') ;
+                W.plot_data.start = start_data ;
+            end
+            
+            % plot goal and goal zone
+            g = W.goal ;
+            g_circ = make_circle(W.goal_radius,100) + repmat(g(1:2),1,100) ;
+            
+            if ~check_if_plot_is_available(W,'goal')
+                goal_data = plot(g(1),g(2),'x','Color',[0.2 0.7 0]) ;
+                W.plot_data.goal = goal_data ;
+            end
+            
+            if ~check_if_plot_is_available(W,'goal_zone')
+                goal_zone_data = plot(g_circ(1,:),g_circ(2,:),'--','Color',[0.2 0.7 0]) ;
+                W.plot_data.goal_zone = goal_zone_data ;
+            end
+            
+            % plot bounds
+            B = W.bounds_as_polyline ;
+            
+            if ~check_if_plot_is_available(W,'bounds')
+                bounds_data = plot(B(1,:),B(2,:),'Color',W.obstacle_seen_color) ;
+                W.plot_data.bounds = bounds_data ;
+            end
+            
+            if hold_check
+                hold off ;
+            end
+        end
     end
 end
