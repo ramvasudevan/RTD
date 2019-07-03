@@ -161,6 +161,12 @@ classdef generic_RTD_planner < planner
             P.HLP.goal = world_info.goal ;
             P.HLP.default_lookahead_distance = P.lookahead_distance ;
             
+            try
+                P.HLP.bounds = P.bounds ;
+            catch
+                P.vdisp('High level planner has no bounds field.',9)
+            end
+            
             % data storage setup
             P.initialize_info_structure()
             
