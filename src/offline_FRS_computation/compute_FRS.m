@@ -46,13 +46,22 @@ function out = compute_FRS(prob)
     hK = prob.hK ; % param space as a semi-algebraic set
     hZ0 = prob.hZ0 ; % initial conds as a semi-algebraic set
     degree = prob.degree ; % degree of w polynomial
-    cost = prob.cost ; % cost function (integral of w(z,k) over Z x K)
+    cost = prob.cost ; % cost function (integral of w(z,k) over Z x K) 
     
     % time horizon as a semi-algebraic set (default is t \in [0,1])
     if isfield(prob,'hT')
        hT = prob.hT ;
     else 
        hT = t * (1 - t) ;
+    end
+    
+    % subset of z \in Z to be used for w; e.g., if you have (x,y,theta) but
+    % you only want w(x,y,k) to be your FRS polynomial, then set
+    %   prob.FRS_states = [x;y]
+    if isfield(prob,'FRS_states')
+        FRS_states = prob.FRS_states ;
+    else
+        FRS_states = z ;
     end
     
     % tracking error function g (default is to not have g, so we don't need
@@ -74,7 +83,7 @@ function out = compute_FRS(prob)
     
     % create monomials for (v,w,q) polynomials
     vmon = monomials([t;z;k], 0:degree) ;
-    wmon = monomials([z;k], 0:degree) ;
+    wmon = monomials([FRS_states;k], 0:degree) ;
     
     % create (v,w,q) decision variable polynomials
     [prog, v, ~] = prog.newFreePoly(vmon) ;
