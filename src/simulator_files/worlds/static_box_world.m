@@ -265,7 +265,7 @@ classdef static_box_world < world
             end
             
             % update the world time index
-            W.current_time = length(agent_info.time) ;
+            W.current_time = agent_info.time(end) ;
         end
         
         %% plotting
