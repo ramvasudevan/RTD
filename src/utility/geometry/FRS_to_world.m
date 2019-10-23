@@ -1,10 +1,10 @@
 function P_world = FRS_to_world(P_FRS, pose, x0_FRS, y0_FRS, x_scale, y_scale)
 % P_world = FRS_to_world(P_FRS, pose, x0_FRS, y0_FRS, x_scale, y_scale)
 %
-% Given a position and heading of the robot in the world frame, positions
-% in the world as xy points, and an offset of the robot's FRS computation
-% frame (x0_FRS, y0_FRS), transform the points from the world frame to the
-% shifted FRS frame and scale them down by the distance D
+% Given a position and heading of the robot in the world frame, points
+% in the FRS frame as xy points, and an offset of the robot's FRS frame
+% (x0_FRS, y0_FRS), transform the points from the FRS frame to the world
+% frame.
 %
 % INPUTS
 %   P_FRS       (x,y) points in FRS frame as a 2-by-N
