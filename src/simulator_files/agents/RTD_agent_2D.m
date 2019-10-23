@@ -26,7 +26,7 @@ classdef RTD_agent_2D < agent
     methods
         %% constructor
         function A = RTD_agent_2D(varargin)
-            A = parse_args(A,varargin{:}) ;
+            A = parse_args(A,'name','RTD Agent 2D',varargin{:}) ;
             
             % set up plot data
             A.plot_data.trajectory = [] ;
