@@ -66,45 +66,49 @@ classdef static_box_world < world
             
             % generate obstacles around room
             N_obs = W.N_obstacles ;
-            O = nan(2, 6*N_obs) ; % preallocate obstacle matrix
-            
-            llo = obs_size(1) ; lhi = obs_size(2) ;
-            orlo = obs_rotation_bounds(1) ;
-            orhi = obs_rotation_bounds(2) ;
-            
-            xlo = B(1) ; xhi = B(2) ; ylo = B(3) ; yhi = B(4) ;
-            xlo = xlo + b ; xhi = xhi - b ;
-            ylo = ylo + b ; yhi = yhi - b ;
-            
-            for idx = 1:6:(6*N_obs-1)
-                l = (lhi-llo)*rand(1) + llo ; % length
-                r = (orhi-orlo)*rand(1) + orlo ; % rotation
-                
-                % obstacle rotation
-                R = [cos(r) sin(r) ; -sin(r) cos(r)] ;
-                
-                % obstacle base
-                o = [-l/2  l/2 l/2 -l/2 -l/2 ;
-                    -l/2 -l/2 l/2  l/2 -l/2 ] ;
-                
-                % obstacle center, which must not be too close to the start
-                % or goal
-                d_center = 0 ;
-                ds_limit = 0.1*max((xhi-xlo),(yhi-ylo)) ;
-                dg_limit = W.goal_radius ;
-                while (d_center < ds_limit || d_center < dg_limit)
-                    c = [(xhi-xlo)*rand(1) + xlo ;
-                        (yhi-ylo)*rand(1) + ylo ] ;
-                    ds = min(dist_point_to_points(s(1:2),c)) ;
-                    dg = min(dist_point_to_points(g,c)) ;
-                    d_center = min(ds,dg) ;
+            if N_obs > 0
+                O = nan(2, 6*N_obs) ; % preallocate obstacle matrix
+
+                llo = obs_size(1) ; lhi = obs_size(2) ;
+                orlo = obs_rotation_bounds(1) ;
+                orhi = obs_rotation_bounds(2) ;
+
+                xlo = B(1) ; xhi = B(2) ; ylo = B(3) ; yhi = B(4) ;
+                xlo = xlo + b ; xhi = xhi - b ;
+                ylo = ylo + b ; yhi = yhi - b ;
+
+                for idx = 1:6:(6*N_obs-1)
+                    l = (lhi-llo)*rand(1) + llo ; % length
+                    r = (orhi-orlo)*rand(1) + orlo ; % rotation
+
+                    % obstacle rotation
+                    R = [cos(r) sin(r) ; -sin(r) cos(r)] ;
+
+                    % obstacle base
+                    o = [-l/2  l/2 l/2 -l/2 -l/2 ;
+                        -l/2 -l/2 l/2  l/2 -l/2 ] ;
+
+                    % obstacle center, which must not be too close to the start
+                    % or goal
+                    d_center = 0 ;
+                    ds_limit = 0.1*max((xhi-xlo),(yhi-ylo)) ;
+                    dg_limit = W.goal_radius ;
+                    while (d_center < ds_limit || d_center < dg_limit)
+                        c = [(xhi-xlo)*rand(1) + xlo ;
+                            (yhi-ylo)*rand(1) + ylo ] ;
+                        ds = min(dist_point_to_points(s(1:2),c)) ;
+                        dg = min(dist_point_to_points(g,c)) ;
+                        d_center = min(ds,dg) ;
+                    end
+
+                    O(:,idx:idx+4) = R*o + repmat(c,1,5) ;
                 end
-                
-                O(:,idx:idx+4) = R*o + repmat(c,1,5) ;
-            end
-            
-            if isnan(O(1,end))
-                O = O(:,1:end-1) ;
+
+                if isnan(O(1,end))
+                    O = O(:,1:end-1) ;
+                end
+            else
+                O = [] ;
             end
             
             W.obstacles = O ;
