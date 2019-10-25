@@ -26,7 +26,7 @@ classdef RTD_agent_2D < agent
     methods
         %% constructor
         function A = RTD_agent_2D(varargin)
-            A = parse_args(A,'name','RTD Agent 2D',varargin{:}) ;
+            A@agent('name','RTD Agent 2D',varargin{:}) ;
             
             % set up plot data
             A.plot_data.trajectory = [] ;
@@ -37,7 +37,7 @@ classdef RTD_agent_2D < agent
             A.make_footprint_plot_data() ;
             A.make_arrow_plot_data() ;
             
-            % reset time, states, and inputs
+            % reset time, states, and inputs, just in case
             A.reset() ;
         end
         
