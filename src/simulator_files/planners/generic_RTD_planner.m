@@ -446,6 +446,11 @@ classdef generic_RTD_planner < planner
                 % create the time and input; by default, this is just k_opt held
                 % for the current FRS time horizon
                 [T_out,U_out,Z_out] = P.create_desired_trajectory(agent_info,k_opt) ;
+                
+                % transform the output to the world frame
+                P.vdisp('Transforming new plan to world frame',7)
+                idx = [agent_info.position_indices(:) ; agent_info.heading_index] ;
+                Z_out(idx,:) = local_to_world(agent_info.state(idx,end),Z_out(idx,:)) ;
             else
                 P.vdisp('No feasible solution found!',2)
                 P.braking_flag = true ;

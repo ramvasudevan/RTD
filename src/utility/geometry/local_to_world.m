@@ -1,54 +1,35 @@
-function P_out = local_to_world(P_robot, P_local, set_dx, set_dy, Dx, Dy)
-% P_out = local_to_world(P_robot, P_local, set_dx, set_dy, Dx, Dy)
+function P_out = local_to_world(robot_pose, P_local)
+% P_out = local_to_world(robot_pose, P_local)
 %
-% Given a position and heading of the robot in its local frame, positions
-% in the local frame as xy points, and an offset of the robot in its local
-% frame (set_dx, set_dy), transform the points from the local frame to the
-% world frame and scale them up by the distances Dx and Dy; note that if Dy
-% is not passed in, we set Dy = Dx.
+% Given a robot's pose (x,y,heading) in the world frame, and points in the
+% local frame, shift and rotate these points to the world frame. The local
+% points should either be passed in as a 2-by-N array of (x,y) points, or
+% a 3-by-N array of (x,y,heading) points.
 %
-% INPUTS
-%   P_robot     robot position (x,y,heading)
-%   P_world     obstacle points in local frame (2xN)
-%   set_dx      x position of robot in its local frame
-%   set_dy      y position of robot in its local frame
-%   Dx          scaling in the x dimension
-%   Dy          scaling in the y dimension (equal to Dx by default)
+% Author: Sean Vaskov and Shreyas Kousik
+% Created: 2016
+% Updated: 29 Oct 2019
 %
-% OUTPUTS:
-%   P_out       points in world frame
-
-    if nargin < 3
-        set_dx = 0 ;
-        set_dy = 0 ;
-        Dx = 1 ;
-        Dy = 1 ;
-    end
-
-    if ~exist('Dy','var')
-        Dy = Dx ;
-    end
-
+% See also: world_to_local, world_to_FRS, FRS_to_world
 
     % extract position and heading from input
-    x = P_robot(1,1) ;
-    y = P_robot(2,1) ;
-    h = P_robot(3,1) ;
-
-    % get matrix to scale the points
-    N = size(P_local,2) ;
-    scale_mat = repmat([Dx;Dy],1,N) ;
-
-    % get matrix to shift the points in the local frame and global frame
-    shift_mat_local = (1./scale_mat) .* repmat([set_dx;set_dy],1,N) ;
-    shift_mat_global = repmat([x;y],1,N) ;
-
-    % get matrix to rotate points
-    R = [cos(h), -sin(h);
-        sin(h), cos(h)];
-
-    % create the output
-    P_local = P_local - shift_mat_local ;
-    P_local = R*P_local ;
-    P_out = (scale_mat).*P_local + shift_mat_global ;
+    x = robot_pose(1,1) ;
+    y = robot_pose(2,1) ;
+    h = robot_pose(3,1) ;
+    
+    % prep
+    P_out = P_local ;
+    [N_rows,N_cols] = size(P_local) ;
+    
+    % rotate points to world frame direction
+    R = [cos(h), -sin(h) ;
+         sin(h),  cos(h) ] ;
+    P_out(1:2,:) = R*P_out(1:2,:) ;
+    
+    if N_rows > 2
+        P_out(3,:) = P_out(3,:) + h ;
+    end
+    
+    % shift points to world frame location
+    P_out(1:2,:) = P_out(1:2,:) + repmat([x;y],1,N_cols) ;
 end
