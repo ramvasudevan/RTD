@@ -19,7 +19,7 @@ function P_out = world_to_local(robot_pose, P_world)
     
     % prep
     P_out = P_world ;
-    [N_rows, N_cols] = size(P_world);
+    [N_rows, N_cols] = size(P_world) ;
     
     % shift all the world points to the position of the robot
     P_out(1:2,:) = P_world(1:2,:) - repmat([x;y],1,N_cols) ;

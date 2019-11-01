@@ -54,40 +54,45 @@ classdef static_box_world < world
             ylo = ylo + 2*b ;
             yhi = yhi - 2*b ;
             
-            s = [xlo ;
-                rand_range(ylo, yhi) ;
-                0 ] ;
-            W.start = s ;
+            if isempty(W.start)
+                s = [xlo ;
+                    rand_range(ylo, yhi) ;
+                    0 ] ;
+                W.start = s ;
+            end
             
             % generate goal position on right side of room
-            g = [xhi ;
-                rand_range(ylo, yhi)] ;
-            W.goal = g ;
+            if isempty(W.goal)
+                g = [xhi ;
+                    rand_range(ylo, yhi)] ;
+                W.goal = g ;
+            end
             
             % generate obstacles around room
             N_obs = W.N_obstacles ;
-            if N_obs > 0
+            
+            if N_obs > 0 && isempty(W.obstacles)
                 O = nan(2, 6*N_obs) ; % preallocate obstacle matrix
-
+                
                 llo = obs_size(1) ; lhi = obs_size(2) ;
                 orlo = obs_rotation_bounds(1) ;
                 orhi = obs_rotation_bounds(2) ;
-
+                
                 xlo = B(1) ; xhi = B(2) ; ylo = B(3) ; yhi = B(4) ;
                 xlo = xlo + b ; xhi = xhi - b ;
                 ylo = ylo + b ; yhi = yhi - b ;
-
+                
                 for idx = 1:6:(6*N_obs-1)
                     l = (lhi-llo)*rand(1) + llo ; % length
                     r = (orhi-orlo)*rand(1) + orlo ; % rotation
-
+                    
                     % obstacle rotation
                     R = [cos(r) sin(r) ; -sin(r) cos(r)] ;
-
+                    
                     % obstacle base
                     o = [-l/2  l/2 l/2 -l/2 -l/2 ;
                         -l/2 -l/2 l/2  l/2 -l/2 ] ;
-
+                    
                     % obstacle center, which must not be too close to the start
                     % or goal
                     d_center = 0 ;
@@ -100,21 +105,20 @@ classdef static_box_world < world
                         dg = min(dist_point_to_points(g,c)) ;
                         d_center = min(ds,dg) ;
                     end
-
+                    
                     O(:,idx:idx+4) = R*o + repmat(c,1,5) ;
                 end
-
+                
                 if isnan(O(1,end))
                     O = O(:,1:end-1) ;
                 end
-            else
-                O = [] ;
+                
+                W.obstacles = O ;
+                W.obstacles_seen = [] ;
+                W.N_obstacles = N_obs ;
             end
             
-            W.obstacles = O ;
-            W.obstacles_seen = [] ;
-            W.obstacles_unseen = O ;
-            W.N_obstacles = N_obs ;
+            W.obstacles_unseen = W.obstacles ;
             
             % set up plot data
             W.plot_data.obstacles_seen = [] ;
