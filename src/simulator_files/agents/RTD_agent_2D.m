@@ -21,6 +21,7 @@ classdef RTD_agent_2D < agent
         plot_footprint_edge_opacity = 1 ;
         plot_arrow_color = [0 0 0.2] ;
         plot_arrow_opacity = 0.5 ;
+        plot_trajectory_at_time_flag = true ;
     end
     
     methods
@@ -165,6 +166,21 @@ classdef RTD_agent_2D < agent
                 % save plot data
                 A.plot_data.footprint = fp_data ;
                 A.plot_data.arrow = arrow_data ;
+            end
+            
+            if A.plot_trajectory_at_time_flag
+                % get the executed path up to the current time
+                X = A.state(A.position_indices,:) ;
+                T_log = A.time <= t ;
+                X = X(:,T_log) ;
+                
+                % plot it
+                if check_if_plot_is_available(A,'trajectory')
+                    A.plot_data.trajectory.XData = X(1,:) ;
+                    A.plot_data.trajectory.YData = X(2,:) ;
+                end
+                    traj_data = plot_path(X,'b-') ;
+                    A.plot_data.trajectory = traj_data ;
             end
         end
     end
