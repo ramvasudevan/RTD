@@ -1,4 +1,5 @@
 classdef RTD_agent_2D < agent
+    %% properties
     properties
         % agent state info
         heading_index = 3 ;
@@ -24,6 +25,7 @@ classdef RTD_agent_2D < agent
         plot_trajectory_at_time_flag = true ;
     end
     
+    %% methods
     methods
         %% constructor
         function A = RTD_agent_2D(varargin)
