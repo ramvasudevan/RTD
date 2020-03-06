@@ -67,8 +67,8 @@ classdef rover_agent < RTD_agent_2D
             m = A.mass ;
             Iz = A.moment_of_inertia ;
             l = A.wheelbase ;
-            lr = A.cm_rearwheel ;
-            mo = (m*lr^2+Iz)/l^2 ;
+            l_r = A.cm_rearwheel ;
+            mo = (m*l_r^2+Iz)/l^2 ;
             
             % set up constants for steering rate
             cs1 = A.steering_constants(1) ;
@@ -140,11 +140,11 @@ classdef rover_agent < RTD_agent_2D
             % compute the dynamics
             delta_des = cs1*u1+cs2 ;
             delta_dot = kst*(delta_des-delta) ;
-            x_dot = vx*cos(psi)-lr*w*sin(psi) ;
-            y_dot = vx*sin(psi)+lr*w*cos(psi) ;
+            x_dot = vx*cos(psi)-l_r*w*sin(psi) ;
+            y_dot = vx*sin(psi)+l_r*w*cos(psi) ;
             psi_dot = w ;
             vx_dot = (Frx-mo*tan(delta)/cos(delta)^2*delta_dot*vx)/(m+mo*tan(delta)^2) ;  
-            vy_dot = lr*vx_dot/l*tan(delta)+lr*vx/l*delta_dot/(cos(delta)^2) ;
+            vy_dot = l_r*vx_dot/l*tan(delta)+l_r*vx/l*delta_dot/(cos(delta)^2) ;
             w_dot = vx_dot/l*tan(delta)+vx/l*delta_dot/(cos(delta)^2) ;
             
             % create output
