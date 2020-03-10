@@ -1,7 +1,7 @@
 classdef segway_agent < RTD_agent_2D
     properties
-        % system parameters
-        max_speed = 2 ; % m/s
+        % dynamics bounds
+        max_speed = 1.5 ; % m/s
         max_accel = 3.75 % m/s^2
         max_yaw_rate = 1.25 ; % rad/s
         max_yaw_accel = 5.9 ; % rad/s^2 ;
@@ -10,11 +10,9 @@ classdef segway_agent < RTD_agent_2D
         yaw_rate_index = 4 ;
         speed_index = 5 ;
         
-        % gains
+        % gains from sys id
         accel_motor_gain = 3.0 ;
         yaw_accel_motor_gain = 2.95 ;
-        heading_gain = 10 ;
-        speed_gain = 10 ;
     end
     
     methods
@@ -26,12 +24,13 @@ classdef segway_agent < RTD_agent_2D
             n_inputs = 2 ;
             stopping_time = 1.5 ;
             sensor_radius = 4 ;
+            LLC = segway_PD_LLC() ;
             
             % create agent
             A@RTD_agent_2D('name','segway','footprint',default_footprint,...
                 'n_states',n_states,'n_inputs',n_inputs,...
                 'stopping_time',stopping_time,'sensor_radius',sensor_radius,...
-                varargin{:}) ;
+                'LLC',LLC,varargin{:}) ;
         end
         
         %% dynamics
@@ -40,58 +39,37 @@ classdef segway_agent < RTD_agent_2D
                 Z = [] ;
             end
             
-            % ZOH for inputs
-            wdes = interp1(T,U(1,:),t,'previous') ; % yaw rate
-            vdes = interp1(T,U(2,:),t,'previous') ; % speed
-            
             % extract the states
             h = z(A.heading_index) ;
             w = z(A.yaw_rate_index) ;
             v = z(A.speed_index) ;
             
-            % determine the inputs
-            Kg = A.yaw_accel_motor_gain ;
-            Ka = A.accel_motor_gain ;
+            % get inputs from low-level controller
+            u = A.LLC.get_control_inputs(A,t,z,T,U,Z) ;
+            w_des = u(1) ;
+            v_des = u(2) ;
             
-            % if a trajectory to follow was provided, try to follow it
-            if ~isempty(Z)
-                htraj = interp1(T,Z(3,:),t) ;
-                vtraj = interp1(T,Z(5,:),t) ;
-                
-                Kh = A.heading_gain ;
-                Kv = A.speed_gain ;
-                
-                wdes = wdes + Kh*(htraj - h) ;
-                vdes = vdes + Kv*(vtraj - v) ;
-            end
+            % saturate commanded yaw rate and speed
+            % v_des = bound_values(v_des,A.max_speed) ;
+            % w_des = bound_values(w_des,A.max_yaw_rate) ;
+
+            % compute accelerations produced by motors
+            k_g = A.yaw_accel_motor_gain ;
+            k_a = A.accel_motor_gain ;
+            g = k_g*(w_des - w) ;
+            a = k_a*(v_des - v) ;
             
-            if vdes > A.max_speed
-                vdes = A.max_speed;
-            elseif vdes < 0
-                vdes = 0;
-            end
+            % saturate accelerations
+            g = bound_values(g,A.max_yaw_accel) ;
+            a = bound_values(a,A.max_accel) ;
             
-            if wdes > A.max_yaw_rate
-                wdes = A.max_yaw_rate;
-            elseif wdes < -A.max_yaw_rate
-                wdes = -A.max_yaw_rate;
-            end
-            
-            g = Kg*(wdes - w) ;
-            a = Ka*(vdes - v) ;
-            
-            % saturate the inputs
-            g = max(min(g,A.max_yaw_accel),-A.max_yaw_accel) ;
-            a = max(min(a,A.max_accel),-A.max_accel) ;
-            
-            % calculate the derivatives
+            % output the dynamics
             xd = v*cos(h) ;
             yd = v*sin(h) ;
             hd = w ;
             wd = g ;
             vd = a ;
-            
-            % return state derivative
+
             zd = [xd ; yd ; hd ; wd ; vd] ;
         end
     end

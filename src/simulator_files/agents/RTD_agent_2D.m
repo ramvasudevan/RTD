@@ -44,6 +44,33 @@ classdef RTD_agent_2D < agent
             A.reset() ;
         end
         
+        %% reset
+        function reset(A,state)
+            if nargin < 2
+                state = zeros(A.n_states,1) ;
+            end
+            
+            % do the reset
+            A.state = zeros(A.n_states,1) ;
+            A.time = 0 ;
+            A.input = zeros(A.n_inputs,1) ;
+            A.input_time = 0 ;
+            
+            % reset the state
+            switch length(state)
+                case A.n_states
+                    A.state = state ;
+                case 2
+                    A.state(A.position_indices) = state ;
+                case 3
+                    A.state([A.position_indices,A.heading_index]) = state ;
+                otherwise
+                    error(['The provided state has an incorrect number of elements!',...
+                        ' Please provide either a 2-by-1 position, a 3-by-1 position',...
+                        ' and heading, or an n_states-by-1 full state vector.'])
+            end
+        end
+        
         %% get agent into
         function agent_info = get_agent_info(A)
             % call superclass method

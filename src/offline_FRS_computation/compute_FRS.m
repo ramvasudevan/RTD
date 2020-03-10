@@ -34,7 +34,8 @@ function out = compute_FRS(prob)
 %   hT      1 x 1 msspoly that defines the time horizon T
 %
 % Authors: Shreyas Kousik and Sean Vaskov
-% Date:    12 Apr 2019
+% Created: 12 Apr 2019
+% Updated: 10 Mar 2020
 
 %% parse inputs
     disp('Extracting parameters')
