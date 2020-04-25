@@ -96,7 +96,7 @@ classdef segway_RTD_planner_static < generic_RTD_planner
                 x0 = F.x0 ;
                 y0 = F.y0 ;
                 D = F.D ;
-                O_FRS = world_to_local(P.agent_state,O,x0,y0,D) ;
+                O_FRS = world_to_FRS(O,P.agent_state,x0,y0,D) ;
                 
                 % get rid of points behind the robot, since we don't let the
                 % segway go backwards, so those points aren't reachable
@@ -129,8 +129,7 @@ classdef segway_RTD_planner_static < generic_RTD_planner
             
             % rotate waypoint to body-fixed frame
             wp = P.current_waypoint ;
-            wp_local = world_to_local(z(1:3),wp(1:2),...
-                0,0,1) ;
+            wp_local = world_to_local(z(1:3),wp(1:2)) ;
             
             % create cost function
             w0 = agent_info.state(4,end) ;
