@@ -1,4 +1,7 @@
 # RTD (Reachability-based Trajectory Design)
+Update on 23 Apr 2020: This repository has moved! Please check out the latest version here: https://github.com/skvaskov/RTD
+
+## Overview
 This repository presents the tools required to implement RTD, which is a method of trajectory planning for autonomous mobile robots that can guarantee safety (in static environments) and not-at-fault behavior (in dynamic environments).
 
 ## Requirements
